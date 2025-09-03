@@ -13,7 +13,7 @@ The Playwright MCP Chrome Extension allows you to connect to pages in your exist
 ### Download the Extension
 
 Download the latest Chrome extension from GitHub:
-- **Download link**: https://github.com/microsoft/playwright-mcp/releases
+- **Download link**: https://github.com/XiansAiPlatform/mcp-playwright/releases
 
 ### Load Chrome Extension
 

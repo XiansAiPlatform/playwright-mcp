@@ -4,9 +4,9 @@
   "description": "Playwright Tools for MCP",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/microsoft/playwright-mcp.git"
+    "url": "git+https://github.com/XiansAiPlatform/mcp-playwright.git"
   },
-  "homepage": "https://playwright.dev",
+  "homepage": "https://github.com/XiansAiPlatform/mcp-playwright",
   "engines": {
     "node": ">=18"
   },
