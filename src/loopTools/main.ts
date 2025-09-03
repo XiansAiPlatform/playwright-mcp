@@ -22,6 +22,7 @@ import { Context } from './context';
 import { perform } from './perform';
 import { snapshot } from './snapshot';
 import { toMcpTool } from '../mcp/tool.js';
+import { preprocessMcpArguments } from '../utils/parameterPreprocessing.js';
 
 import type { FullConfig } from '../config.js';
 import type { ServerBackend } from '../mcp/server.js';
@@ -57,7 +58,11 @@ class LoopToolsServerBackend implements ServerBackend {
 
   async callTool(name: string, args: mcpServer.CallToolRequest['params']['arguments']): Promise<mcpServer.CallToolResult> {
     const tool = this._tools.find(tool => tool.schema.name === name)!;
-    const parsedArguments = tool.schema.inputSchema.parse(args || {});
+
+    // Preprocess arguments to convert string numbers to actual numbers
+    const preprocessedArguments = preprocessMcpArguments(args || {}, tool.schema.inputSchema);
+    const parsedArguments = tool.schema.inputSchema.parse(preprocessedArguments);
+
     return await tool.handle(this._context!, parsedArguments);
   }
 

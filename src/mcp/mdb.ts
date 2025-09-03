@@ -22,6 +22,7 @@ import * as mcpServer from './server';
 import * as mcpHttp from './http';
 import { wrapInProcess } from './server';
 import { ManualPromise } from './manualPromise';
+import { preprocessMcpArguments } from '../utils/parameterPreprocessing';
 
 import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import type { Client } from '@modelcontextprotocol/sdk/client/index.js';
@@ -54,8 +55,11 @@ export class MDBBackend implements mcpServer.ServerBackend {
   }
 
   async callTool(name: string, args: mcpServer.CallToolRequest['params']['arguments']): Promise<mcpServer.CallToolResult> {
-    if (name === pushToolsSchema.name)
-      return await this._pushTools(pushToolsSchema.inputSchema.parse(args || {}));
+    if (name === pushToolsSchema.name) {
+      // Preprocess arguments to convert string numbers to actual numbers
+      const preprocessedArguments = preprocessMcpArguments(args || {}, pushToolsSchema.inputSchema);
+      return await this._pushTools(pushToolsSchema.inputSchema.parse(preprocessedArguments));
+    }
 
     const interruptPromise = new ManualPromise<mcpServer.CallToolResult>();
     this._interruptPromise = interruptPromise;

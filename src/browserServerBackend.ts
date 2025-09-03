@@ -22,6 +22,7 @@ import { Response } from './response';
 import { SessionLog } from './sessionLog';
 import { filteredTools } from './tools';
 import { toMcpTool } from './mcp/tool';
+import { preprocessMcpArguments } from './utils/parameterPreprocessing';
 
 import type { Tool } from './tools/tool';
 import type { BrowserContextFactory } from './browserContextFactory';
@@ -66,7 +67,11 @@ export class BrowserServerBackend implements ServerBackend {
     const tool = this._tools.find(tool => tool.schema.name === name)!;
     if (!tool)
       throw new Error(`Tool "${name}" not found`);
-    const parsedArguments = tool.schema.inputSchema.parse(rawArguments || {});
+
+    // Preprocess arguments to convert string numbers to actual numbers
+    const preprocessedArguments = preprocessMcpArguments(rawArguments || {}, tool.schema.inputSchema);
+    const parsedArguments = tool.schema.inputSchema.parse(preprocessedArguments);
+
     const context = this._context!;
     const response = new Response(context, name, parsedArguments);
     context.setRunningTool(name);
