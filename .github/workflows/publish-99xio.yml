@@ -45,7 +45,22 @@ jobs:
         fi
         echo "Version format is valid: $VERSION"
         
-    - name: Update package.json version and name
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+      
+    - name: Build package
+      run: npm run build
+      
+    - name: Run linting
+      run: npm run lint
+      
+    - name: Run tests
+      run: npm run ctest
+      
+    - name: Update package.json version and name for publishing
       run: |
         VERSION="${{ steps.version.outputs.version }}"
         CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -65,21 +80,6 @@ jobs:
           echo "package.json already at version $VERSION"
         fi
         
-    - name: Install dependencies
-      run: npm ci
-      
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps
-      
-    - name: Build package
-      run: npm run build
-      
-    - name: Run linting
-      run: npm run lint
-      
-    - name: Run tests
-      run: npm run ctest
-      
     - name: Verify build output
       run: |
         echo "Checking build output..."
